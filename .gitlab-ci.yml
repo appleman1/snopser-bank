@@ -1,4 +1,0 @@
-stages:
-- build
-- release
-image: maven:3.5.4
