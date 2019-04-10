@@ -19,8 +19,8 @@ CREATE TABLE operation_logs (
   start_date        timestamp,
   end_date          timestamp,
   account_id        bigint,
-  operation_type_id int,
-  status_id         int
+  operation_type_id varchar(20),
+  status_id         varchar(20)
 );
 
 
