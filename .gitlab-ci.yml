@@ -1,0 +1,110 @@
+stages:
+- build
+- release
+image: maven:3.5.4
+
+variables:
+  MAVEN_CLI_OPTS_AUTOTEST: "-s .m2/settings.xml --batch-mode"
+  MAVEN_CLI_OPTS_ISTAR: "-s .mvn/settings.xml --batch-mode"
+  MAVEN_OPTS: "-Dmaven.repo.local=.mvn/repository -DaltDeploymentRepository=responsum::default::${ARTIFACTORY_URL}"
+cache:
+  paths:
+  - .mvn/repo/
+  - target/
+
+autotests_run_docker:
+  image: dr.mediascope.net/mediascope/responsum/autotest-new:latest
+  tags:
+  - build
+  services:
+  - docker:dind
+  stage: build
+  script:
+  ######## install project
+  - mvn -T3 -DskipTests=true ${MAVEN_CLI_OPTS_ISTAR} install
+
+  ######## build and run контейнеры приложения
+  - docker build -t task-provider-test ./standalone/responsum-istar-task-provider/docker
+  - docker run -d  -v /var/log/responsum:/responsum-istar/log/responsum-istar-task-provider/logs -p 8888:8888 -p 5011:5011 --name task-provider-test  -e TZ=Europe/Moscow  -e boot_profile=${TASK_PROVIDER_PROFILES} -e logging_file_path='/var/log/responsum' -e debug_port=5011 task-provider-test
+
+  - docker build -t calculator-test ./standalone/responsum-istar-calculator/docker
+  - docker run -d  -v /var/log/responsum:/responsum-istar/log/responsum-istar-calculator/logs -p 8887:8887 -p 5012:5012 --name calculator-test  -e TZ=Europe/Moscow  -e boot_profile=${CALCULATOR_PROFILES} -e logging_file_path='/var/log/responsum' -e debug_port=5012 calculator-test
+
+  - docker build -t information-test ./standalone/responsum-istar-information/docker
+  - docker run -d  -v /var/log/responsum:/responsum-istar/log/responsum-istar-information/logs -p 8889:8889 -p 5013:5013 --name information-test  -e TZ=Europe/Moscow  -e boot_profile=${INFORMATION_PROFILES} -e logging_file_path='/var/log/responsum' -e debug_port=5013 information-test
+
+  - docker build -t users-synchronizer-test ./standalone/responsum-istar-users-synchronizer/docker
+  - docker run -d  -v /var/log/responsum:/responsum-istar/log/responsum-istar-users-synchronizer/logs -p 8886:8886 -p 5014:5014 --name users-synchronizer-test  -e TZ=Europe/Moscow  -e boot_profile=${USERS_SYNCHRONIZER_PROFILES} -e restrictions_service_url=${RESTRICTIONS_SERVICE_URL} -e by_cron=${BY_CRON} -e logging_file_path='/var/log/responsum' -e debug_port=5014 users-synchronizer-test
+
+  ##- sleep 30
+  ######## авторизация в гит и клон проекта автотестов и install
+  - git config --global user.email ${TEAMCITY_EMAIL}
+  - git config --global user.name ${TEAMCITY_USER}
+  - git clone -b develop http://${TEAMCITY_USER}:${TEAMCITY_TOKEN}@gitlab.gallup.tns/QA/tests/responsum.git
+  - cd responsum
+  - mvn -T3 $MAVEN_CLI_OPTS_AUTOTEST install -DskipTests=true
+
+  ########  run gauge
+
+  - mvn $MAVEN_CLI_OPTS_AUTOTEST gauge:execute -f responsum-api/pom.xml  -Dtags="${TEST_TAGS}"  -Denv=$AUTOTESTS_ENV -DspecsDir=specs/ -DinParallel=${PARALLEL_RUN_GAUGE} || true
+  - mvn $MAVEN_CLI_OPTS_AUTOTEST gauge:execute -f responsum-sync/pom.xml -Dtags="${TEST_TAGS}"  -Denv=$AUTOTESTS_ENV -DspecsDir=specs/ -DinParallel=${PARALLEL_RUN_GAUGE} || true
+  ############ попытка привязать allure отчет
+  ##  - mkdir ../result-test
+  ##  - cp -r /builds/Responsum/responsum-istar/responsum/responsum-api/logs/reports/xml-report /builds/Responsum/responsum-istar/result-test
+  ######## run saxon
+  ##  - mkdir ../result-saxon
+  ##  - java -jar misc/saxon/saxon9he.jar -s:responsum-api/logs/reports/xml-report/result.xml -xsl:responsum-api/src/test/resources/xslt/transform.xsl path=../result-saxon
+
+  ######## build and run контейнер allure
+  ##  - mkdir ../reports
+  ##  - docker build -t allure ./misc/allure2
+  ##  - docker run -d -v /builds/Responsum/responsum-istar/result-saxon:/allure-results -v /builds/Responsum/responsum-istar/reports:/allure-report -p 8000:80  --name allure allure ./allure generate /allure-results -o /allure-report --clean
+  # ------------------------
+  ######### создание папки для результата и перемещение результатов
+
+  ###- mv responsum-api/logs/ ../reports
+
+  artifacts:
+    paths:
+    ##    - reports/
+    ##    - result-test/
+    ##    - result-saxon/
+    - responsum/responsum-api/logs/
+    - responsum/responsum-sync/logs/
+    expire_in: 1 week
+  only:
+  - feature/test_istar
+
+push_to_registry:
+  image: dr.mediascope.net/mediascope/responsum/autotest-new:latest
+  tags:
+  - release
+  services:
+  - docker:dind
+  stage: release
+  script:
+  - mvn -T3 -DskipTests=true ${MAVEN_CLI_OPTS_ISTAR} install
+
+  - docker login -u $CI_BUILD_LOGIN -p $CI_BUILD_TOKEN $DOCKER_REGISTRY
+
+  - docker build -t $DOCKER_REGISTRY/mediascope/responsum/responsum-istar-task-provider:latest ./standalone/responsum-istar-task-provider/docker
+  - docker build -t $DOCKER_REGISTRY/mediascope/responsum/responsum-istar-calculator:latest ./standalone/responsum-istar-calculator/docker
+  - docker build -t $DOCKER_REGISTRY/mediascope/responsum/responsum-istar-information:latest ./standalone/responsum-istar-information/docker
+  - docker build -t $DOCKER_REGISTRY/mediascope/responsum/responsum-istar-users-synchronizer:latest ./standalone/responsum-istar-users-synchronizer/docker
+
+  - docker build -t $DOCKER_REGISTRY/mediascope/responsum/responsum-istar-task-provider:1.2 ./standalone/responsum-istar-task-provider/docker
+  - docker build -t $DOCKER_REGISTRY/mediascope/responsum/responsum-istar-calculator:1.2 ./standalone/responsum-istar-calculator/docker
+  - docker build -t $DOCKER_REGISTRY/mediascope/responsum/responsum-istar-information:1.2 ./standalone/responsum-istar-information/docker
+  - docker build -t $DOCKER_REGISTRY/mediascope/responsum/responsum-istar-users-synchronizer:1.2 ./standalone/responsum-istar-users-synchronizer/docker
+
+  - docker push $DOCKER_REGISTRY/mediascope/responsum/responsum-istar-task-provider:latest
+  - docker push $DOCKER_REGISTRY/mediascope/responsum/responsum-istar-calculator:latest
+  - docker push $DOCKER_REGISTRY/mediascope/responsum/responsum-istar-information:latest
+  - docker push $DOCKER_REGISTRY/mediascope/responsum/responsum-istar-users-synchronizer:latest
+
+  - docker push $DOCKER_REGISTRY/mediascope/responsum/responsum-istar-task-provider:1.2
+  - docker push $DOCKER_REGISTRY/mediascope/responsum/responsum-istar-calculator:1.2
+  - docker push $DOCKER_REGISTRY/mediascope/responsum/responsum-istar-information:1.2
+  - docker push $DOCKER_REGISTRY/mediascope/responsum/responsum-istar-users-synchronizer:1.2
+  only:
+  - develop
