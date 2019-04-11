@@ -2,6 +2,7 @@ package net.snopser.bank.snopserbank.service.implementation;
 
 import net.snopser.bank.snopserbank.entity.Account;
 import net.snopser.bank.snopserbank.entity.OperationLog;
+import net.snopser.bank.snopserbank.model.Operation;
 import net.snopser.bank.snopserbank.model.Result;
 import net.snopser.bank.snopserbank.model.Status;
 import net.snopser.bank.snopserbank.repository.AccountRepository;
@@ -37,25 +38,25 @@ public class DefaultAccountService implements AccountService {
 
     @Override
     @Transactional
-    public Result innerTransfer(BigInteger from, BigInteger to, BigDecimal count) {
-        OperationLog operationLogFrom = new OperationLog(from, WITHDRAWAL);
-        OperationLog operationLogTo = new OperationLog(to, REPLENISHMENT);
+    public Result innerTransfer(Operation operation) {
+        OperationLog operationLogFrom = new OperationLog(operation.getSenderAccount(), WITHDRAWAL);
+        OperationLog operationLogTo = new OperationLog(operation.getRecieverAccount(), REPLENISHMENT);
         List<OperationLog> logList = asList(operationLogFrom, operationLogTo);
         try {
             //Сохраняем логи в таблицу OperationLogs
             operationLogService.saveTransfer(logList);
             List<BigInteger> listAccountId = new ArrayList<>();
-            listAccountId.add(from);
-            listAccountId.add(to);
+            listAccountId.add(operation.getSenderAccount());
+            listAccountId.add(operation.getRecieverAccount());
             //Находим аккаунты принадлежищие номерам счетов
             List<Account> findAccounts = accountRepository.findAllById(listAccountId);
             //Проходим по аккаунтам, обновляем информцию о счетах
             findAccounts.forEach(account -> {
-                if (account.getAccountId().equals(from)) {
-                    account.setCount(account.getCount().subtract(count));
+                if (account.getAccountId().equals(operation.getSenderAccount())) {
+                    account.setCount(account.getCount().subtract(operation.getCount()));
                 }
-                if (account.getAccountId().equals(to)) {
-                    account.setCount(account.getCount().add(count));
+                if (account.getAccountId().equals(operation.getRecieverAccount())) {
+                    account.setCount(account.getCount().add(operation.getCount()));
                 }
             });
             //обновляем сущности аккаунтов

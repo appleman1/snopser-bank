@@ -15,17 +15,10 @@ import java.util.UUID;
 @Data
 @Builder
 public class Result {
-    @Nullable
-    private final String login;
-    @Nullable
-    private final UUID profileId;
+
     private final List<String> messages;
 
-    private Result(String login, UUID profileId, List<String> messages) {
-        this.login = login;
-        this.profileId = profileId;
+    private Result(List<String> messages) {
         this.messages = messages;
     }
-
-
 }

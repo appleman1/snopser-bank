@@ -1,11 +1,9 @@
 package net.snopser.bank.snopserbank.controller;
 
+import net.snopser.bank.snopserbank.model.Operation;
 import net.snopser.bank.snopserbank.model.Result;
 import net.snopser.bank.snopserbank.service.implementation.DefaultAccountService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -27,8 +25,8 @@ public class TransferController {
     }
 
     @PostMapping("/inner")
-    public Result innerTransfer(@RequestParam BigInteger from, @RequestParam BigInteger to, @RequestParam BigDecimal count) {
-        return accountService.innerTransfer(from, to, count);
+    public Result innerTransfer(@RequestBody Operation operation) {
+        return accountService.innerTransfer(operation);
     }
 
     @PostMapping("/outer")
