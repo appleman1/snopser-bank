@@ -42,11 +42,14 @@ public class DefaultAccountService implements AccountService {
         OperationLog operationLogTo = new OperationLog(to, REPLENISHMENT);
         List<OperationLog> logList = asList(operationLogFrom, operationLogTo);
         try {
+            //Сохраняем логи в таблицу OperationLogs
             operationLogService.saveTransfer(logList);
             List<BigInteger> listAccountId = new ArrayList<>();
             listAccountId.add(from);
             listAccountId.add(to);
+            //Находим аккаунты принадлежищие номерам счетов
             List<Account> findAccounts = accountRepository.findAllById(listAccountId);
+            //Проходим по аккаунтам, обновляем информцию о счетах
             findAccounts.forEach(account -> {
                 if (account.getAccountId().equals(from)) {
                     account.setCount(account.getCount().subtract(count));
@@ -55,8 +58,10 @@ public class DefaultAccountService implements AccountService {
                     account.setCount(account.getCount().add(count));
                 }
             });
+            //обновляем сущности аккаунтов
             accountRepository.saveAll(findAccounts);
             setStatusLog(logList, SUCCESS);
+            //обновляем логи
             operationLogService.saveTransfer(logList);
         } catch (Exception e) {
             setStatusLog(logList, FAILED);

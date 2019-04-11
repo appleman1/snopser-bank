@@ -11,6 +11,4 @@ import java.util.UUID;
  */
 public interface OperationLogService {
     void saveTransfer(List<OperationLog> logs);
-
-
 }
