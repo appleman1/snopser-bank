@@ -27,7 +27,7 @@ import static net.snopser.bank.snopserbank.model.Status.SUCCESS;
 @Service
 public class DefaultAccountService implements AccountService {
     private final AccountRepository accountRepository;
-    private final DefaultOperationLogService operationLogService;
+    private final OperationLogService operationLogService;
 
     public DefaultAccountService(AccountRepository accountRepository, DefaultOperationLogService operationLogService) {
         this.accountRepository = accountRepository;
@@ -73,7 +73,7 @@ public class DefaultAccountService implements AccountService {
 
     @Override
     public Result outerTransfer(Integer from, Integer to, BigDecimal count) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     private void setStatusLog(List<OperationLog> logs, Status status) {
