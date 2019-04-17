@@ -28,9 +28,4 @@ public class TransferController {
     public Result innerTransfer(@RequestBody Operation operation) {
         return accountService.innerTransfer(operation);
     }
-
-    @PostMapping("/outer")
-    public Result outerTransfer(@RequestParam Integer from, @RequestParam Integer to, @RequestParam BigDecimal count) {
-        return Result.builder().messages(asList("Еще не реализован")).build();
-    }
 }

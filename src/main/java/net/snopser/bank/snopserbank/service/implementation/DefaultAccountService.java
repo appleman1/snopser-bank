@@ -6,6 +6,7 @@ import net.snopser.bank.snopserbank.model.Operation;
 import net.snopser.bank.snopserbank.model.Result;
 import net.snopser.bank.snopserbank.model.Status;
 import net.snopser.bank.snopserbank.repository.AccountRepository;
+import net.snopser.bank.snopserbank.repository.OperationLogRepository;
 import net.snopser.bank.snopserbank.service.AccountService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,11 +29,12 @@ import static net.snopser.bank.snopserbank.model.Status.SUCCESS;
 @Service
 public class DefaultAccountService implements AccountService {
     private final AccountRepository accountRepository;
-    private final DefaultOperationLogService operationLogService;
+    private final OperationLogRepository operationLogRepository;
 
-    public DefaultAccountService(AccountRepository accountRepository, DefaultOperationLogService operationLogService) {
+    public DefaultAccountService(AccountRepository accountRepository, OperationLogRepository operationLogRepository) {
         this.accountRepository = accountRepository;
-        this.operationLogService = operationLogService;
+
+        this.operationLogRepository = operationLogRepository;
     }
 
 
@@ -44,7 +46,7 @@ public class DefaultAccountService implements AccountService {
         List<OperationLog> logList = asList(operationLogFrom, operationLogTo);
         try {
             //Сохраняем логи в таблицу OperationLogs
-            operationLogService.saveTransfer(logList);
+            operationLogRepository.saveAll(logList);
             List<BigInteger> listAccountId = new ArrayList<>();
             listAccountId.add(operation.getSenderAccount());
             listAccountId.add(operation.getRecieverAccount());
@@ -63,18 +65,13 @@ public class DefaultAccountService implements AccountService {
             accountRepository.saveAll(findAccounts);
             setStatusLog(logList, SUCCESS);
             //обновляем логи
-            operationLogService.saveTransfer(logList);
+            operationLogRepository.saveAll(logList);
         } catch (Exception e) {
             setStatusLog(logList, FAILED);
-            operationLogService.saveTransfer(logList);
+            operationLogRepository.saveAll(logList);
             throw new RuntimeException();
         }
         return Result.builder().messages(asList("snopser-bank.inner-transfer.ok")).build();
-    }
-
-    @Override
-    public Result outerTransfer(Integer from, Integer to, BigDecimal count) {
-        return null;
     }
 
     private void setStatusLog(List<OperationLog> logs, Status status) {
