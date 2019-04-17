@@ -1,46 +1,47 @@
 package net.snopser.bank.snopserbank.configuration;
 
+import net.snopser.bank.snopserbank.security.JwtConfigurer;
+import net.snopser.bank.snopserbank.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configurers.provisioning.InMemoryUserDetailsManagerConfigurer;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.header.writers.StaticHeadersWriter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+
+import javax.security.auth.Subject;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.login.LoginException;
+import java.security.AuthProvider;
+import java.util.Arrays;
 
 /**
  * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
  */
 @Configuration
-@EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-
-    private final PasswordEncoder passwordEncoder;
-
-    public SecurityConfiguration(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .anyRequest()
-                .authenticated()
+        http.headers().frameOptions().disable();
+        http
+                .httpBasic().disable()
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .httpBasic();
-    }
+                .authorizeRequests()
+                .antMatchers("/h2-console/**").permitAll()
+                .antMatchers("/auth/signin").permitAll()
+                .antMatchers( "/transfer/inner/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+                .and()
+                .apply(new JwtConfigurer(jwtTokenProvider));
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder builder, @Value("${user.password}") String pass, @Value("${user.login}") String login) throws Exception {
-        String password = passwordEncoder.encode(pass);
-        InMemoryUserDetailsManagerConfigurer<AuthenticationManagerBuilder> mngConfig = builder.inMemoryAuthentication();
-        UserDetails userDetails = User.withUsername(login).password(password).roles("USER").build();
-        mngConfig.withUser(userDetails);
     }
 }

@@ -11,6 +11,4 @@ import java.math.BigInteger;
 public interface AccountService {
 
     Result innerTransfer(BigInteger from, BigInteger to, BigDecimal count);
-
-    Result outerTransfer(Integer from, Integer to, BigDecimal count);
 }

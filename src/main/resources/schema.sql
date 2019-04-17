@@ -12,7 +12,10 @@ CREATE TABLE banks (
 CREATE TABLE clients (
   client_id char(36) PRIMARY KEY,
   bank_id   char(36),
-  fio       varchar(max)
+  fio       varchar(max),
+  login     char(max),
+  password  char(max),
+  client_client_id  binary
 );
 CREATE TABLE operation_logs (
   operation_id      char(36) PRIMARY KEY,
@@ -22,5 +25,8 @@ CREATE TABLE operation_logs (
   operation_type_id varchar(20),
   status_id         varchar(20)
 );
-
+CREATE TABLE client_roles (
+  client_client_id binary not null,
+  roles    varchar(max)
+)
 
