@@ -75,4 +75,22 @@ values ('cbca327ff25841fa876b0e854b2b4db7',
         'password');
 
 INSERT INTO client_roles (client_client_id, roles)
-values ('cbca327ff25841fa876b0e854b2b4db1', 'ROLE_ADMIN')
+values ('cbca327ff25841fa876b0e854b2b4db1', 'ROLE_ADMIN');
+
+INSERT INTO client_roles (client_client_id, roles)
+values ('cbca327ff25841fa876b0e854b2b4db2', 'ROLE_ADMIN');
+
+INSERT INTO client_roles (client_client_id, roles)
+values ('cbca327ff25841fa876b0e854b2b4db3', 'ROLE_ADMIN');
+
+INSERT INTO client_roles (client_client_id, roles)
+values ('cbca327ff25841fa876b0e854b2b4db4', 'ROLE_ADMIN');
+
+INSERT INTO client_roles (client_client_id, roles)
+values ('cbca327ff25841fa876b0e854b2b4db5', 'ROLE_ADMIN');
+
+INSERT INTO client_roles (client_client_id, roles)
+values ('cbca327ff25841fa876b0e854b2b4db6', 'ROLE_ADMIN');
+
+INSERT INTO client_roles (client_client_id, roles)
+values ('cbca327ff25841fa876b0e854b2b4db7', 'ROLE_ADMIN');
