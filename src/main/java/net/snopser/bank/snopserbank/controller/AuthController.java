@@ -40,11 +40,14 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity signin(@RequestBody AuthenticationRequest data) {
-
         try {
             String username = data.getUsername();
-            String token = jwtTokenProvider.createToken(username, this.users.findByLogin(username).orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found")).getRoles());
-
+            String token = jwtTokenProvider.createToken(
+                    username,
+                    this.users.findByLogin(username)
+                            .orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found"))
+                            .getRoles()
+            );
             Map<Object, Object> model = new HashMap<>();
             model.put("username", username);
             model.put("token", token);
