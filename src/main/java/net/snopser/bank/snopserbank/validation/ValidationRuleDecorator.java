@@ -1,24 +1,28 @@
 package net.snopser.bank.snopserbank.validation;
 
 import net.snopser.bank.snopserbank.model.Operation;
-import net.snopser.bank.snopserbank.model.Result;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
  */
 abstract public class ValidationRuleDecorator implements ValidationRule {
-    protected ValidationRule validationRule;
+    private List<ValidationRule> validationRule;
 
-    public ValidationRuleDecorator(ValidationRule validationRule) {
+    public ValidationRuleDecorator(List<ValidationRule> validationRule) {
         this.validationRule = validationRule;
     }
 
     @Override
-    public Result check(Operation operation) {
-        return validationRule.check(operation);
+    public List<String> check(Operation operation) {
+        return validationRule.stream()
+                .map(rule -> rule.check(operation))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 
-    public Result newCheck(Operation operation) {
-        return Result.builder().build();
-    }
+    public abstract List<String> newCheck(Operation operation);
 }

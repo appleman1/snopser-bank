@@ -3,10 +3,9 @@ package net.snopser.bank.snopserbank.model;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.lang.Nullable;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
@@ -15,10 +14,11 @@ import java.util.UUID;
 @Data
 @Builder
 public class Result {
+    private final String clientLogin;
+    private final Collection<String> messages;
 
-    private final List<String> messages;
-
-    private Result(List<String> messages) {
+    private Result(String clientLogin, Collection<String> messages) {
+        this.clientLogin = clientLogin;
         this.messages = messages;
     }
 }

@@ -14,8 +14,7 @@ CREATE TABLE clients (
   bank_id   char(36),
   fio       varchar(max),
   login     char(max),
-  password  char(max),
-  client_client_id  binary
+  password  char(max)
 );
 CREATE TABLE operation_logs (
   operation_id      char(36) PRIMARY KEY,

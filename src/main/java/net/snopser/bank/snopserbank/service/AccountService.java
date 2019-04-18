@@ -1,5 +1,6 @@
 package net.snopser.bank.snopserbank.service;
 
+import net.snopser.bank.snopserbank.model.Operation;
 import net.snopser.bank.snopserbank.model.Result;
 
 import java.math.BigDecimal;
@@ -10,5 +11,5 @@ import java.math.BigInteger;
  */
 public interface AccountService {
 
-    Result innerTransfer(BigInteger from, BigInteger to, BigDecimal count);
+    Result innerTransfer(Operation operation);
 }

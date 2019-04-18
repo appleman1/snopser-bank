@@ -1,11 +1,13 @@
 package net.snopser.bank.snopserbank.validation;
 
+import net.snopser.bank.snopserbank.model.Message;
 import net.snopser.bank.snopserbank.model.Operation;
-import net.snopser.bank.snopserbank.model.Result;
+
+import java.util.List;
 
 /**
  * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
  */
 public interface ValidationRule {
-    Result check(Operation operation);
+    List<String> check(Operation operation);
 }

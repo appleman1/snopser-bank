@@ -1,8 +1,10 @@
 package net.snopser.bank.snopserbank.controller;
 
+import net.snopser.bank.snopserbank.entity.Client;
 import net.snopser.bank.snopserbank.model.Operation;
 import net.snopser.bank.snopserbank.model.Result;
 import net.snopser.bank.snopserbank.service.implementation.DefaultAccountService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -25,7 +27,7 @@ public class TransferController {
     }
 
     @PostMapping("/inner")
-    public Result innerTransfer(@RequestBody Operation operation) {
-        return accountService.innerTransfer(operation);
+    public Result innerTransfer(@RequestBody Operation operation, @AuthenticationPrincipal Client client) {
+        return accountService.innerTransfer(operation.setClient(client));
     }
 }
