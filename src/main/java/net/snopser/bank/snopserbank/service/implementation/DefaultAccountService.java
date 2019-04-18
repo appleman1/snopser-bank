@@ -2,7 +2,6 @@ package net.snopser.bank.snopserbank.service.implementation;
 
 import net.snopser.bank.snopserbank.entity.Account;
 import net.snopser.bank.snopserbank.entity.OperationLog;
-import net.snopser.bank.snopserbank.model.Message;
 import net.snopser.bank.snopserbank.model.Operation;
 import net.snopser.bank.snopserbank.model.Result;
 import net.snopser.bank.snopserbank.model.Status;
@@ -19,7 +18,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static net.snopser.bank.snopserbank.model.OperationType.REPLENISHMENT;

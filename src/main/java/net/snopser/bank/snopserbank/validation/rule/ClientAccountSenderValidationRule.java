@@ -1,7 +1,6 @@
 package net.snopser.bank.snopserbank.validation.rule;
 
 import net.snopser.bank.snopserbank.entity.Account;
-import net.snopser.bank.snopserbank.model.Message;
 import net.snopser.bank.snopserbank.model.Operation;
 import net.snopser.bank.snopserbank.repository.AccountRepository;
 import net.snopser.bank.snopserbank.validation.ValidationRule;
