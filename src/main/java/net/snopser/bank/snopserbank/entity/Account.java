@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.UUID;
 
 @Entity
@@ -13,7 +14,7 @@ public class Account {
 
     @Id
     @Column(name = "account_id")
-    private int accountId;
+    private BigInteger accountId;
 
     @Column(name = "bank_id")
     private int bankId;
@@ -24,7 +25,7 @@ public class Account {
     @Column(name = "client_id")
     private UUID clientId;
 
-    public int getAccountId() {
+    public BigInteger getAccountId() {
         return accountId;
     }
 
@@ -38,5 +39,25 @@ public class Account {
 
     public UUID getClientId() {
         return clientId;
+    }
+
+    public Account setAccountId(BigInteger accountId) {
+        this.accountId = accountId;
+        return this;
+    }
+
+    public Account setBankId(int bankId) {
+        this.bankId = bankId;
+        return this;
+    }
+
+    public Account setCount(BigDecimal count) {
+        this.count = count;
+        return this;
+    }
+
+    public Account setClientId(UUID clientId) {
+        this.clientId = clientId;
+        return this;
     }
 }

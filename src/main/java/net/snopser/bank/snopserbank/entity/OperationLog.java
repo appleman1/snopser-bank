@@ -1,9 +1,11 @@
 package net.snopser.bank.snopserbank.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import net.snopser.bank.snopserbank.model.OperationType;
+import net.snopser.bank.snopserbank.model.Status;
+import org.springframework.data.annotation.PersistenceConstructor;
+
+import javax.persistence.*;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -15,42 +17,40 @@ public class OperationLog {
     @Column(name = "operation_id")
     private UUID operationId;
 
-    @Column (name = "start_date")
+    @Column(name = "start_date")
     private LocalDateTime startDate;
 
-    @Column (name = "end_date")
+    @Column(name = "end_date")
     private LocalDateTime endDate;
 
-    @Column (name = "account_id")
-    private int accountId;
+    @Column(name = "account_id")
+    private BigInteger accountId;
 
-    @Column (name = "operation_type_id")
-    private int operationType;
+    @Column(name = "operation_type_id")
+    @Enumerated(EnumType.STRING)
+    private OperationType operationType;
 
-    @Column (name = "status_id")
-    private int statusId;
+    @Column(name = "status_id")
+    @Enumerated(EnumType.STRING)
+    private Status statusId;
 
-    public UUID getOperationId() {
-        return operationId;
+    public OperationLog() {
     }
 
-    public LocalDateTime getStartDate() {
-        return startDate;
+    public OperationLog(BigInteger accountId, OperationType operationType) {
+        this.operationId = UUID.randomUUID();
+        this.startDate = LocalDateTime.now();
+        this.endDate = null;
+        this.accountId = accountId;
+        this.operationType = operationType;
+        this.statusId = Status.IN_PROCESS;
     }
 
-    public LocalDateTime getEndDate() {
-        return endDate;
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
     }
 
-    public int getAccountId() {
-        return accountId;
-    }
-
-    public int getOperationType() {
-        return operationType;
-    }
-
-    public int getStatusId() {
-        return statusId;
+    public void setStatusId(Status statusId) {
+        this.statusId = statusId;
     }
 }
