@@ -22,6 +22,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.ResponseEntity.status;
 
 /**
+ * Контроллер для перехвата исключений
  * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
  */
 @ControllerAdvice
