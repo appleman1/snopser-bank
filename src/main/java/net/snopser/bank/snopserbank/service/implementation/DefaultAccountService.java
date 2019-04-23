@@ -2,6 +2,7 @@ package net.snopser.bank.snopserbank.service.implementation;
 
 import net.snopser.bank.snopserbank.entity.Account;
 import net.snopser.bank.snopserbank.entity.OperationLog;
+import net.snopser.bank.snopserbank.exception.TransferErrorException;
 import net.snopser.bank.snopserbank.model.Operation;
 import net.snopser.bank.snopserbank.model.Result;
 import net.snopser.bank.snopserbank.model.Status;
@@ -20,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static net.snopser.bank.snopserbank.model.OperationType.REPLENISHMENT;
 import static net.snopser.bank.snopserbank.model.OperationType.WITHDRAWAL;
 import static net.snopser.bank.snopserbank.model.Status.FAILED;
@@ -37,12 +39,10 @@ public class DefaultAccountService implements AccountService {
 
     public DefaultAccountService(AccountRepository accountRepository, OperationLogRepository operationLogRepository, Validator validator, MessageSource messageSource) {
         this.accountRepository = accountRepository;
-
         this.operationLogRepository = operationLogRepository;
         this.validator = validator;
         this.messageSource = messageSource;
     }
-
 
     @Override
     @Transactional
@@ -51,9 +51,9 @@ public class DefaultAccountService implements AccountService {
         OperationLog operationLogFrom = new OperationLog(operation.getSenderAccount(), WITHDRAWAL);
         OperationLog operationLogTo = new OperationLog(operation.getRecieverAccount(), REPLENISHMENT);
         List<OperationLog> logList = asList(operationLogFrom, operationLogTo);
+        //Сохраняем логи в таблицу OperationLogs
+        operationLogRepository.saveAll(logList);
         try {
-            //Сохраняем логи в таблицу OperationLogs
-            operationLogRepository.saveAll(logList);
             Collection<String> validate = validator.validate(operation).getMessages();
             if (!validate.isEmpty()) {
                 setStatusLog(logList, FAILED);
@@ -81,10 +81,13 @@ public class DefaultAccountService implements AccountService {
             operationLogRepository.saveAll(logList);
         } catch (Exception e) {
             setStatusLog(logList, FAILED);
-            operationLogRepository.saveAll(logList);
-            throw new RuntimeException();
+            throw new TransferErrorException(e, logList);
         }
-        return resultTransfer.messages(asList(messageSource.getMessage("snopser-bank.inner-transfer.ok", null, null))).build();
+        return resultTransfer
+                .messages(singletonList(
+                        messageSource.getMessage("snopser-bank.inner-transfer.ok", null, null)
+                ))
+                .build();
     }
 
     private void setStatusLog(List<OperationLog> logs, Status status) {
