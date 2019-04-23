@@ -20,7 +20,7 @@ import java.security.AuthProvider;
 import java.util.Arrays;
 
 /**
- * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
+ * @author Виктор Фалькенберг 
  */
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {

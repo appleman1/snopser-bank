@@ -4,7 +4,7 @@ import net.snopser.bank.snopserbank.model.Operation;
 import net.snopser.bank.snopserbank.model.Result;
 
 /**
- * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
+ * @author Виктор Фалькенберг
  */
 public interface Validator {
     Result validate(Operation operation);

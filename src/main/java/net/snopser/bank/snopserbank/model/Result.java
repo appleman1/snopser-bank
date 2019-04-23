@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
+ * @author Виктор Фалькенберг
  */
 @EqualsAndHashCode()
 @Data

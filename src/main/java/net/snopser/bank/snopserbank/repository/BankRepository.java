@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 
 /**
- * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
+ * @author Виктор Фалькенберг
  */
 public interface BankRepository extends JpaRepository<Bank, UUID> {
 }

@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
- * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
+ * @author Виктор Фалькенберг
  */
 public class JwtTokenFilter extends GenericFilterBean {
 

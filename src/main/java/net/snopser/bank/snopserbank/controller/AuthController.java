@@ -22,7 +22,7 @@ import java.util.Map;
 import static org.springframework.http.ResponseEntity.ok;
 
 /**
- * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
+ * @author Виктор Фалькенберг
  */
 @RestController
 @RequestMapping("/auth")

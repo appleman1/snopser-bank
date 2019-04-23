@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
+ * @author Виктор Фалькенберг
  */
 public interface ClientRepository extends JpaRepository<Client, UUID> {
     Optional<Client> findByLogin(String login);

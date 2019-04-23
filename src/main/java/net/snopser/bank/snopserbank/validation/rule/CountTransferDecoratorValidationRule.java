@@ -14,7 +14,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 
 /**
- * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
+ * @author Виктор Фалькенберг
  */
 @Component
 public class CountTransferDecoratorValidationRule extends ValidationRuleDecorator {

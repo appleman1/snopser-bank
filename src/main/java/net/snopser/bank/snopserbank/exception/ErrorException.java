@@ -3,7 +3,7 @@ package net.snopser.bank.snopserbank.exception;
 import lombok.Getter;
 
 /**
- * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
+ * @author Виктор Фалькенберг
  */
 @Getter
 public abstract class ErrorException extends RuntimeException {

@@ -13,7 +13,7 @@ import java.math.BigInteger;
 import static java.util.Arrays.asList;
 
 /**
- * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
+ * @author Виктор Фалькенберг
  */
 
 @RestController

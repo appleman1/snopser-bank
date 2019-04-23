@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
+ * @author Виктор Фалькенберг
  */
 
 public interface AccountRepository extends JpaRepository<Account, BigInteger> {

@@ -5,7 +5,7 @@ import net.snopser.bank.snopserbank.entity.OperationLog;
 import java.util.List;
 
 /**
- * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
+ * @author Виктор Фалькенберг
  */
 public class TransferErrorException extends ErrorException {
 

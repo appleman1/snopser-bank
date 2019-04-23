@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.asList;
 
 /**
- * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
+ * @author Виктор Фалькенберг
  */
 @Component
 public class AccountRecieverValidationRule implements ValidationRule {

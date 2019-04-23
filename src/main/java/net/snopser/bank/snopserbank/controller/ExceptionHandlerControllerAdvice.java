@@ -23,7 +23,7 @@ import static org.springframework.http.ResponseEntity.status;
 
 /**
  * Контроллер для перехвата исключений
- * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
+ * @author Виктор Фалькенберг
  */
 @ControllerAdvice
 public class ExceptionHandlerControllerAdvice implements MessageSourceAware {

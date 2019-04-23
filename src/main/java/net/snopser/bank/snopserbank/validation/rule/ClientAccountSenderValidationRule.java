@@ -15,7 +15,7 @@ import java.util.Optional;
 import static java.util.Arrays.asList;
 
 /**
- * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
+ * @author Виктор Фалькенберг
  */
 @Component
 public class ClientAccountSenderValidationRule implements ValidationRule {

@@ -28,7 +28,7 @@ import static net.snopser.bank.snopserbank.model.Status.FAILED;
 import static net.snopser.bank.snopserbank.model.Status.SUCCESS;
 
 /**
- * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
+ * @author Виктор Фалькенберг
  */
 @Service
 public class DefaultAccountService implements AccountService {

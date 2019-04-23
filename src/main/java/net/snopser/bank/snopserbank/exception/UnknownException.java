@@ -1,7 +1,7 @@
 package net.snopser.bank.snopserbank.exception;
 
 /**
- * @author Виктор Фалькенберг (viktor.falkenberg@mediascope.net)
+ * @author Виктор Фалькенберг
  */
 public class UnknownException extends ErrorException {
 
